@@ -1,0 +1,13 @@
+This repository contains processing scripts for preparing ISMIP6 archive data
+for input to Sea Level Model.  The shell script pre-process-ismip6-run.sh
+needs to be modified at the top to set the experiment you want to process.
+It assumes that the ISMIP6 archive has already been downloaded locally.
+It is also necessary to manually copy four files to the directory where
+the repository is cloned:
+* etopo2_512_orig
+* GLlat_512.txt
+* GLlon_512.txt
+* mapfile_polarRank2_to_gaussRank2.nc
+On Badger these files can be found at:
+/lustre/scratch4/turquoise/mhoffman/ISMIP6_SLM_Processing_MJH
+
