@@ -13,6 +13,8 @@ parser.add_argument('--lithk', dest='lithk', required=True,
                     help='')
 parser.add_argument('--topg', dest='topg', required=True,
                     help='')
+parser.add_argument('--out', dest='out', required=True,
+                    help='')
 args = parser.parse_args()
 
 
@@ -31,7 +33,7 @@ for t in range(nt):
 slc = vaf / Aocn * rhoi / rhoo
 slc = slc - slc[0]
 
-fileout = netCDF4.Dataset('slc.nc' ,"w")
+fileout = netCDF4.Dataset(args.out ,"w")
 fileout.createDimension('time')
 fileout.dimensions['time'] = f1.dimensions['time']
 

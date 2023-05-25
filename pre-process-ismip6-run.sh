@@ -18,6 +18,10 @@ STRIDE=5 # stride in years to subsample
 
 set -e # exit on error
 
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+echo $SCRIPT_DIR
+
+
 # Select mapping file
 if [[ "$IS" == "AIS" ]]; then
    MAPFILE=$AISMAPFILE
@@ -33,7 +37,7 @@ echo Using mapfile: $MAPFILE
 exp_in_path=$ISMIP6_ARCHIVE/$IS/$INST/$ISM/$EXP
 exp_out_path=$OUTPUT_DIR/$IS/${INST}_$ISM/$EXP
 name_base_string=${IS}_${INST}_${ISM}_${EXP}
-mkdir -p $exp_out_path/subsampled
+mkdir -p $exp_out_path/preprocessed
 mkdir -p $exp_out_path/regridded
 echo "$BASH_SOURCE"
 echo exp_in_path=$exp_in_path
@@ -47,25 +51,38 @@ echo -e "\n\n----- Subsampling data and subtracting control run -----\n"
 ctrl_lithk=`ls -1 $ISMIP6_ARCHIVE/$IS/$INST/$ISM/ctrl*/lithk*nc`
 
 # get section of ctrl that matches time levels of projection.  assume it is the last 86 time levels
-ctrl_20152100=$exp_out_path/subsampled/lithk_${IS}_${INST}_${ISM}_ctrl_2015-2100.nc
-ncks -O -d time,-86, $ctrl_lithk $ctrl_20152100
+ctrl_lithk_20152100=$exp_out_path/preprocessed/lithk_${IS}_${INST}_${ISM}_ctrl_2015-2100.nc
+ncks -O -d time,-86, $ctrl_lithk $ctrl_lithk_20152100
 
-# calculate anomaly from ctrl
-lithk_anom=$exp_out_path/subsampled/lithk_${name_base_string}_subsampled_anomaly.nc
-ncdiff -O -d time,0,,$STRIDE $exp_in_path/lithk_${name_base_string}.nc $ctrl_20152100 $lithk_anom
+# get initial ctrl thickness
+lithk_ctrl_init=$exp_out_path/preprocessed/lithk_${name_base_string}_ctrl_init.nc
+ncks -O -d time,0 $ctrl_lithk_20152100 $lithk_ctrl_init
+ncwa -O -a time $lithk_ctrl_init ${lithk_ctrl_init}_notime
 
-# get initial thickness
-lithk_init=$exp_out_path/subsampled/lithk_${name_base_string}_init.nc
-ncks -O -d time,0 $exp_in_path/lithk_${name_base_string}.nc $lithk_init
-ncwa -O -a time $lithk_init ${lithk_init}_notime
+# calculate ctrl anomaly over time
+lithk_ctrl_anom=$exp_out_path/preprocessed/lithk_${name_base_string}_ctrl_anomaly.nc
+ncdiff -O $ctrl_lithk_20152100 ${lithk_ctrl_init}_notime $lithk_ctrl_anom
 
-# add anomaly to i.c.
-lithk_anom_adj=$exp_out_path/subsampled/lithk_${name_base_string}_subsampled_anomaly_adjusted.nc
-ncbo -O --op_typ=add $lithk_anom ${lithk_init}_notime $lithk_anom_adj
+# remove ctrl anomaly from projection
+lithk_anom_adj=$exp_out_path/preprocessed/lithk_${name_base_string}_anomaly_adjusted.nc
+ncdiff -O $exp_in_path/lithk_${name_base_string}.nc $lithk_ctrl_anom $lithk_anom_adj
 
-# subsample topg
-topg_subsamp=$exp_out_path/subsampled/topg_${name_base_string}_subsampled.nc
-ncks -O -d time,0,,$STRIDE $exp_in_path/topg_${name_base_string}.nc $topg_subsamp
+# ensure no negative thickness!
+lithk_anom_adj_cln=$exp_out_path/preprocessed/lithk_${name_base_string}_anomaly_adjusted_cleaned.nc
+ncap2 -O -s "where(lithk<0.0) lithk=0.0" $lithk_anom_adj $lithk_anom_adj_cln
+
+# subsample anomaly adjusted file
+lithk_subsamp=$exp_out_path/preprocessed/lithk_${name_base_string}_preprocessed.nc
+ncks -O -d time,0,,$STRIDE $lithk_anom_adj_cln $lithk_subsamp
+
+# only need initial topg
+topg_subsamp=$exp_out_path/preprocessed/topg_${name_base_string}_preprocessed.nc
+ncks -O -d time,0 $exp_in_path/topg_${name_base_string}.nc $topg_subsamp
+
+# calc SLC for ctrl, projection, and anomaly-adjusted-cleaned proj
+python $SCRIPT_DIR/calc_SLR.py --lithk $ctrl_lithk_20152100 --topg $exp_in_path/topg_${name_base_string}.nc --out $exp_out_path/preprocessed/slc-ctrl.nc
+python $SCRIPT_DIR/calc_SLR.py --lithk $exp_in_path/lithk_${name_base_string}.nc --topg $exp_in_path/topg_${name_base_string}.nc --out $exp_out_path/preprocessed/slc-proj.nc
+python $SCRIPT_DIR/calc_SLR.py --lithk $lithk_anom_adj_cln --topg $exp_in_path/topg_${name_base_string}.nc --out $exp_out_path/preprocessed/slc-proj-adj.nc
 
 # --------
 echo -e "\n\n----- Performing remapping of lithk and topg -----\n"
@@ -80,7 +97,7 @@ ncremap -m $MAPFILE -i $topg_subsamp -o $topg_gauss
 echo -e "\n\n----- Starting Reformat ------\n"
 # --------
 mkdir -p $exp_out_path/reformatted
-python reformat_SL_inputdata.py $exp_out_path/regridded/ lithk_${name_base_string}_GaussianGrid.nc topg_${name_base_string}_GaussianGrid.nc
+python $SCRIPT_DIR/reformat_SL_inputdata.py $exp_out_path/regridded/ lithk_${name_base_string}_GaussianGrid.nc topg_${name_base_string}_GaussianGrid.nc
 
 mkdir -p $exp_out_path/SLM_output
 echo -e "\nComplete.\n"
