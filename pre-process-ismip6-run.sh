@@ -88,10 +88,13 @@ python $SCRIPT_DIR/calc_SLR.py --lithk $lithk_anom_adj_cln --topg $exp_in_path/t
 echo -e "\n\n----- Performing remapping of lithk and topg -----\n"
 # --------
 lithk_gauss=$exp_out_path/regridded/lithk_${name_base_string}_GaussianGrid.nc
-ncremap -m $MAPFILE -i $lithk_anom_adj -o $lithk_gauss
+ncremap -m $MAPFILE -i $lithk_subsamp -o $lithk_gauss
+# set fill value to 0 and remove attribute to leave 0 values where there is no ice
+ncatted -a _FillValue,,o,f,0.0 $lithk_gauss
+ncatted -a _FillValue,,d,, $lithk_gauss
 
 topg_gauss=$exp_out_path/regridded/topg_${name_base_string}_GaussianGrid.nc
-ncremap -m $MAPFILE -i $topg_subsamp -o $topg_gauss
+ncremap -m $MAPFILE -i $topg_subsamp -o $topg_gauss --add_fll
 
 # --------
 echo -e "\n\n----- Starting Reformat ------\n"
