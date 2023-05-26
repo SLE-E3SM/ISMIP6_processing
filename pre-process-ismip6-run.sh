@@ -71,9 +71,16 @@ ncdiff -O $exp_in_path/lithk_${name_base_string}.nc $lithk_ctrl_anom $lithk_anom
 lithk_anom_adj_cln=$exp_out_path/preprocessed/lithk_${name_base_string}_anomaly_adjusted_cleaned.nc
 ncap2 -O -s "where(lithk<0.0) lithk=0.0" $lithk_anom_adj $lithk_anom_adj_cln
 
+# add bed topo so we can calculate grounded ice
+ncks -A $exp_in_path/topg_${name_base_string}.nc $lithk_anom_adj_cln
+
 # subsample anomaly adjusted file
 lithk_subsamp=$exp_out_path/preprocessed/lithk_${name_base_string}_preprocessed.nc
 ncks -O -d time,0,,$STRIDE $lithk_anom_adj_cln $lithk_subsamp
+
+# only keep grounded ice
+grdthk_subsamp=$exp_out_path/preprocessed/grdice_${name_base_string}_preprocessed.nc
+ncap2 -s "where(lithk*910/1028+topg<0) lithk=0.0" $lithk_subsamp $grdthk_subsamp
 
 # only need initial topg
 topg_subsamp=$exp_out_path/preprocessed/topg_${name_base_string}_preprocessed.nc
@@ -87,11 +94,11 @@ python $SCRIPT_DIR/calc_SLR.py --lithk $lithk_anom_adj_cln --topg $exp_in_path/t
 # --------
 echo -e "\n\n----- Performing remapping of lithk and topg -----\n"
 # --------
-lithk_gauss=$exp_out_path/regridded/lithk_${name_base_string}_GaussianGrid.nc
-ncremap -m $MAPFILE -i $lithk_subsamp -o $lithk_gauss
+grdthk_gauss=$exp_out_path/regridded/grdthk_${name_base_string}_GaussianGrid.nc
+ncremap -m $MAPFILE -i $grdthk_subsamp -o $grdthk_gauss
 # set fill value to 0 and remove attribute to leave 0 values where there is no ice
-ncatted -a _FillValue,,o,f,0.0 $lithk_gauss
-ncatted -a _FillValue,,d,, $lithk_gauss
+ncatted -a _FillValue,,o,f,0.0 $grdthk_gauss
+ncatted -a _FillValue,,d,, $grdthk_gauss
 
 topg_gauss=$exp_out_path/regridded/topg_${name_base_string}_GaussianGrid.nc
 ncremap -m $MAPFILE -i $topg_subsamp -o $topg_gauss --add_fll
@@ -100,7 +107,7 @@ ncremap -m $MAPFILE -i $topg_subsamp -o $topg_gauss --add_fll
 echo -e "\n\n----- Starting Reformat ------\n"
 # --------
 mkdir -p $exp_out_path/reformatted
-python $SCRIPT_DIR/reformat_SL_inputdata.py $exp_out_path/regridded/ lithk_${name_base_string}_GaussianGrid.nc topg_${name_base_string}_GaussianGrid.nc
+python $SCRIPT_DIR/reformat_SL_inputdata.py $exp_out_path/regridded/ $grdthk_gauss $topg_gauss
 
 mkdir -p $exp_out_path/SLM_output
 echo -e "\nComplete.\n"
