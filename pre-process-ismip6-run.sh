@@ -80,7 +80,7 @@ ncks -O -d time,0,,$STRIDE $lithk_anom_adj_cln $lithk_subsamp
 
 # only keep grounded ice
 grdthk_subsamp=$exp_out_path/preprocessed/grdice_${name_base_string}_preprocessed.nc
-ncap2 -s "where(lithk*910/1028+topg<0) lithk=0.0" $lithk_subsamp $grdthk_subsamp
+ncap2 -O -s "where(lithk*910/1028+topg<0) lithk=0.0" $lithk_subsamp $grdthk_subsamp
 
 # only need initial topg
 topg_subsamp=$exp_out_path/preprocessed/topg_${name_base_string}_preprocessed.nc
@@ -109,5 +109,9 @@ echo -e "\n\n----- Starting Reformat ------\n"
 mkdir -p $exp_out_path/reformatted
 python $SCRIPT_DIR/reformat_SL_inputdata.py $exp_out_path/regridded/ $grdthk_gauss $topg_gauss
 
-mkdir -p $exp_out_path/SLM_output
+mkdir -p $exp_out_path/SLM_run/OUTPUT_SLM
+cp namelist.sealevel $exp_out_path/SLM_run
+cp runslm $exp_out_path/SLM_run
+cp job_script.sh $exp_out_path/SLM_run
+
 echo -e "\nComplete.\n"

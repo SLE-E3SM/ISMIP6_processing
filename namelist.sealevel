@@ -1,0 +1,53 @@
+&time_config
+    itersl = 1
+    starttime = 2015
+    dt1 = 5
+/
+&io_directory
+    inputfolder_ice = '../reformatted/'
+    inputfolder = '../reformatted/'
+    planetfolder = '/usr/projects/climate/hollyhan/SeaLevelModel_Inputs/earthmodel/'
+    gridfolder = '/usr/projects/climate/hollyhan/SeaLevelModel_Inputs/others/'
+    outputfolder = 'OUTPUT_SLM/'
+    outputfolder_ice = 'ICELOAD_SLM/'
+    folder_coupled = ''
+/
+&file_format
+    ext ='.nc'
+    fType_in = 'netcdf'
+    fType_out = 'netcdf'
+/
+&file_name
+    planetmodel   = 'prem_512.l60K2C.sum18p6.dum19p2.tz19p4.lm22'
+    icemodel      = 'grdice'
+    icemodel_out  = ''
+    timearray     = 'times'
+    topomodel     = ''
+    topo_initial  = 'topo_initial'
+    grid_lat      = 'GLlat_512.txt'
+    grid_lon      = 'GLlon_512.txt'
+/
+&model_config
+    checkmarine = .false.
+    tpw = .true.
+    calcRG = .true.
+    input_times = .false.
+    initial_topo = .true.
+    iceVolume = .true.
+    coupling = .false.
+    patch_ice = .false.
+/
+&timewindow_config
+    L_sim = 85
+    dt1 = 5
+    dt2 = 1
+    dt3 = 1
+    dt4 = 1
+    Ldt1 = 85
+    Ldt2 = 0
+    Ldt3 = 0
+    Ldt4 = 0
+/
+&others
+    whichplanet = 'earth'
+/

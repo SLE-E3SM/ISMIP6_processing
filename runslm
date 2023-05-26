@@ -1,0 +1,27 @@
+#!/bin/csh -fx
+
+# runs sl model as standalone
+ set itersl = 1
+ set ncalls = 17
+ set dtime = 5
+ set starttime=0
+
+
+ 
+ @ iter = 0
+#====================
+ while ($iter <= $ncalls)     #  max # of iterations 
+#==================
+ set iter = $iter
+echo "Starting Sea Level Model."
+/usr/projects/climate/mhoffman/SLE-E3SM/1DSeaLevelModel_FWTW/slmodel.exe $itersl $iter $dtime $starttime namelist
+echo "Sea Level Model time step complete."
+@ iter = $iter + 1
+#==
+ end
+#==
+
+#rm SLtemp/
+echo "Maximum number of iterations reached"
+
+exit
