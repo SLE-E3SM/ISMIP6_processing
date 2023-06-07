@@ -24,7 +24,7 @@ topofname_out = 'topo_initial'
 # Part 1. reformatting the ice thickness file
 # read in the original ice thickness data
 print ('opening file:'+os.path.join(fpath_in, icefname_in) )
-ds1 = xr.open_mfdataset(os.path.join(fpath_in, icefname_in), combine='nested')
+ds1 = xr.open_dataset(os.path.join(fpath_in, icefname_in), decode_times=False)
 lithk = ds1.lithk
 lat = ds1.lat
 lon = ds1.lon
