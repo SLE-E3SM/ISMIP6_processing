@@ -18,6 +18,7 @@ ISMIP6_ARCHIVE=/lustre/scratch5/mhoffman/ISMIP6_2100_archive
 AIS_STD_EXP_LIST="exp05 exp06 exp07 exp08 exp09 exp10 exp12 exp13"
 EXP_LIST=$AIS_STD_EXP_LIST
 
+date
 i=0
 ii=0
 ((maxproc=nprocs-1))
@@ -46,3 +47,4 @@ for d1 in $ISMIP6_ARCHIVE/$IS/*/ ; do
     done
 done
 wait
+date
