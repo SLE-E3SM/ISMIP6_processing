@@ -6,8 +6,8 @@
 &io_directory
     inputfolder_ice = '../reformatted/'
     inputfolder = '../reformatted/'
-    planetfolder = '/usr/projects/climate/hollyhan/SeaLevelModel_Inputs/earthmodel/'
-    gridfolder = '/usr/projects/climate/hollyhan/SeaLevelModel_Inputs/others/'
+    planetfolder = '/usr/projects/climate/mhoffman/SLE-E3SM/SeaLevelModel_Standard_Inputs/earthmodel/'
+    gridfolder = '/usr/projects/climate/mhoffman/SLE-E3SM/SeaLevelModel_Standard_Inputs/other/'
     outputfolder = 'OUTPUT_SLM/'
     outputfolder_ice = 'ICELOAD_SLM/'
     folder_coupled = ''
@@ -18,7 +18,7 @@
     fType_out = 'netcdf'
 /
 &file_name
-    planetmodel   = 'prem_512.l60K2C.sum18p6.dum19p2.tz19p4.lm22'
+    planetmodel   = 'prem_512.l75C.umVM7.lmVM7'
     icemodel      = 'grdice'
     icemodel_out  = ''
     timearray     = 'times'
