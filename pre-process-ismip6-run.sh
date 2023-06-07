@@ -94,18 +94,25 @@ echo "calculate ctrl anomaly over time"
 lithk_ctrl_anom=$exp_out_path/preprocessed/lithk_${name_base_string}_ctrl_anomaly.nc
 ncdiff -O $ctrl_lithk_20152100 ${lithk_ctrl_init}_notime $lithk_ctrl_anom
 
-echo "remove ctrl anomaly from projection"
+echo "get last 86 time levels of projection"
+# some runs have 87 instead of 86
 # some models used nonstandard filenames, so use wildcard to find the correct file
 lithkfile=`ls -1 $exp_in_path/*lithk_*.nc`
+lithk_20152100=$exp_out_path/preprocessed/lithk_${IS}_${INST}_${ISM}_2015-2100.nc
+ncks -O -d time,-86, $lithkfile $lithk_20152100
+
+echo "remove ctrl anomaly from projection"
 lithk_anom_adj=$exp_out_path/preprocessed/lithk_${name_base_string}_anomaly_adjusted.nc
-ncdiff -O $lithkfile $lithk_ctrl_anom $lithk_anom_adj
+ncdiff -O $lithk_20152100 $lithk_ctrl_anom $lithk_anom_adj
 
 echo "ensure no negative thickness!"
 lithk_anom_adj_cln=$exp_out_path/preprocessed/lithk_${name_base_string}_anomaly_adjusted_cleaned.nc
 ncap2 -O -s "where(lithk<0.0) lithk=0.0" $lithk_anom_adj $lithk_anom_adj_cln
 
 echo "add bed topo so we can calculate grounded ice"
-ncks -A $exp_in_path/topg_${name_base_string}.nc $lithk_anom_adj_cln
+# some models used nonstandard filenames, so use wildcard to find the correct file
+topgfile=`ls -1 $exp_in_path/*topg_*.nc`
+ncks -A $topgfile $lithk_anom_adj_cln
 
 echo "subsample anomaly adjusted file"
 lithk_subsamp=$exp_out_path/preprocessed/lithk_${name_base_string}_preprocessed.nc
@@ -116,8 +123,6 @@ grdthk_subsamp=$exp_out_path/preprocessed/grdice_${name_base_string}_preprocesse
 ncap2 -O -s "where(lithk*910/1028+topg<0) lithk=0.0" $lithk_subsamp $grdthk_subsamp
 
 echo "subsample topg - only need initial topg"
-# some models used nonstandard filenames, so use wildcard to find the correct file
-topgfile=`ls -1 $exp_in_path/*topg_*.nc`
 topg_subsamp=$exp_out_path/preprocessed/topg_${name_base_string}_preprocessed.nc
 ncks -O -d time,0 $topgfile $topg_subsamp
 
