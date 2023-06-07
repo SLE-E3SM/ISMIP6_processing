@@ -42,14 +42,13 @@ nt = len(f1.dimensions['time'])
 
 vaf = np.zeros((nt,))
 for t in range(nt):
-    haf = lithk[t,:,:] + np.minimum(topg[t,:,:], 0.0) * rhoo / rhoi
+    haf = lithk[t,:,:] + np.minimum(topg[0,:,:], 0.0) * rhoo / rhoi
     vaf[t] = haf.sum() * dx**2
 slc = vaf / Aocn * rhoi / rhoo
 slc = slc - slc[0]
 
 fileout = netCDF4.Dataset(args.out ,"w")
-fileout.createDimension('time')
-fileout.dimensions['time'] = f1.dimensions['time']
+fileout.createDimension('time', len(f1.dimensions['time']))
 
 vafout = fileout.createVariable('vaf', 'd', ('time',))
 slcout = fileout.createVariable('slc', 'd', ('time',))

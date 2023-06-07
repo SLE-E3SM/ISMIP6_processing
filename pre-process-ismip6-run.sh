@@ -13,7 +13,7 @@
 IS=AIS
 INST=DOE
 ISM=MALI
-EXP=exp13
+EXP=exp12
 # --------------------
 
 set -e # exit on error
@@ -127,9 +127,9 @@ topg_subsamp=$exp_out_path/preprocessed/topg_${name_base_string}_preprocessed.nc
 ncks -O -d time,0 $topgfile $topg_subsamp
 
 echo "calc SLC for ctrl, projection, and anomaly-adjusted-cleaned proj"
-python $SCRIPT_DIR/calc_SLR.py --lithk $ctrl_lithk_20152100 --topg $exp_in_path/topg_${name_base_string}.nc --out $exp_out_path/preprocessed/slc-ctrl.nc
-python $SCRIPT_DIR/calc_SLR.py --lithk $exp_in_path/lithk_${name_base_string}.nc --topg $exp_in_path/topg_${name_base_string}.nc --out $exp_out_path/preprocessed/slc-proj.nc
-python $SCRIPT_DIR/calc_SLR.py --lithk $lithk_anom_adj_cln --topg $exp_in_path/topg_${name_base_string}.nc --out $exp_out_path/preprocessed/slc-proj-adj.nc
+python $SCRIPT_DIR/calc_SLR.py --lithk $ctrl_lithk_20152100 --topg $topg_subsamp --out $exp_out_path/preprocessed/slc-ctrl.nc
+python $SCRIPT_DIR/calc_SLR.py --lithk $lithk_20152100      --topg $topg_subsamp --out $exp_out_path/preprocessed/slc-proj.nc
+python $SCRIPT_DIR/calc_SLR.py --lithk $lithk_anom_adj_cln  --topg $topg_subsamp --out $exp_out_path/preprocessed/slc-proj-adj.nc
 
 # --------
 echo -e "\n\n----- Performing remapping of lithk and topg -----\n"
