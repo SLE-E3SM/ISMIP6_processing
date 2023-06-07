@@ -23,7 +23,7 @@ OUTPUT_DIR=/lustre/scratch5/mhoffman/SLM_Processing_MJH2
 ISMIP6_ARCHIVE=/lustre/scratch5/mhoffman/ISMIP6_2100_archive
 AISMAPFILE=/usr/projects/climate/mhoffman/SLE-E3SM/ISMIP6_processing/mapfile_polarRank2_to_gaussRank2.nc
 GISMAPFILE=/usr/projects/climate/mhoffman/SLE-E3SM/ISMIP6_processing/mapfile_ismip6_GrIS_Gauss.nc
-STRIDE=5 # stride in years to subsample
+YEAR_STRIDE=5 # stride in years to subsample
 # ----------------------------------
 
 
@@ -116,7 +116,7 @@ ncks -A $topgfile $lithk_anom_adj_cln
 
 echo "subsample anomaly adjusted file"
 lithk_subsamp=$exp_out_path/preprocessed/lithk_${name_base_string}_preprocessed.nc
-ncks -O -d time,0,,$STRIDE $lithk_anom_adj_cln $lithk_subsamp
+ncks -O -d time,0,,$YEAR_STRIDE $lithk_anom_adj_cln $lithk_subsamp
 
 echo "only keep grounded ice"
 grdthk_subsamp=$exp_out_path/preprocessed/grdice_${name_base_string}_preprocessed.nc
@@ -147,7 +147,7 @@ ncremap -m $MAPFILE -i $topg_subsamp -o $topg_gauss --add_fll
 echo -e "\n\n----- Starting Reformat ------\n"
 # --------
 mkdir -p $exp_out_path/reformatted
-python $SCRIPT_DIR/reformat_SL_inputdata.py $exp_out_path/regridded/ $grdthk_gauss $topg_gauss
+python $SCRIPT_DIR/reformat_SL_inputdata.py $exp_out_path/regridded/ $grdthk_gauss $topg_gauss $YEAR_STRIDE
 
 echo "set up run directory"
 mkdir -p $exp_out_path/SLM_run/OUTPUT_SLM

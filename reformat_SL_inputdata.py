@@ -3,16 +3,18 @@ import numpy as np
 import os
 import sys
 
-if len(sys.argv) != 4:
-   sys.exit('ERROR: reformat_SL_inputdata.py requires 3 input arguments')
+if len(sys.argv) != 5:
+   sys.exit('ERROR: reformat_SL_inputdata.py requires 4 input arguments')
 
 fpath_in = sys.argv[1]
 icefname_in = sys.argv[2]
 topofname_in = sys.argv[3]
+dtime = float(sys.argv[4])
 
 print("Using fpath_in="+fpath_in)
 print("Using icefname_in="+icefname_in)
 print("Using topofname_in="+topofname_in)
+print(f"Using dtime={dtime}")
 
 ################## Only edit what's in the box as necessary ################
 fpath_out = fpath_in + '../reformatted/'
@@ -31,7 +33,6 @@ lon = ds1.lon
 t = ds1.time
 
 # loop through the original data and save each time level in separate file
-dtime = 5.0
 times = dtime * np.arange(0, len(t))
 np.savetxt(os.path.join(fpath_out+"times"), times)
 
