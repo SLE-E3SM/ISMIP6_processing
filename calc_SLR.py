@@ -20,8 +20,22 @@ args = parser.parse_args()
 
 f1 = netCDF4.Dataset(args.lithk, 'r')
 lithk = f1.variables['lithk']
-x = f1.variables['x']
-dx = x[1] - x[0]
+if 'x' in f1.variables:
+    x = f1.variables['x']
+    dx = x[1] - x[0]
+else:
+    nx = len(f1.dimensions['x'])
+    if nx == 761:
+        dx = 8000.0
+    elif nx == 381:
+        dx = 16000.0
+    elif nx == 1521:
+        dx = 4000.0
+    elif nx == 3041:
+        dx = 2000.0
+    else:
+        sys.exit("Unable to determine dx")
+
 f2 = netCDF4.Dataset(args.topg, 'r')
 topg = f2.variables['topg']
 nt = len(f1.dimensions['time'])
