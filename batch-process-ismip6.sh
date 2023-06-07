@@ -32,7 +32,7 @@ for d1 in $ISMIP6_ARCHIVE/$IS/*/ ; do
        for EXP in $EXP_LIST; do
           if [ -d "$ISMIP6_ARCHIVE/$IS/$INST/$ISM/$EXP" ]; then
              echo Starting: $i $ii $IS $INST $ISM $EXP
-             ./pre-process-ismip6-run.sh $IS $INST $ISM $EXP && echo "SUCCESS: $i $ii $IS $INST $ISM $EXP" || echo "FAILED: $i $ii $IS $INST $ISM $EXP" &
+             srun --exclusive -n 1 ./pre-process-ismip6-run.sh $IS $INST $ISM $EXP && echo "SUCCESS: $i $ii $IS $INST $ISM $EXP" || echo "FAILED: $i $ii $IS $INST $ISM $EXP" &
              ((ii+=1))
              if [[ "$i" == $maxproc ]]; then
                 wait
