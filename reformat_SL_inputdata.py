@@ -45,7 +45,7 @@ for time_idx in np.arange(0, len(t)):
 # read in topography files
 etopo2_data = np.loadtxt('etopo2_512_orig') # present-day etopo2 dataset
 etopo2_data = np.flipud(etopo2_data)
-ds2 = xr.open_dataset(os.path.join(fpath_in, topofname_in)) # model topo
+ds2 = xr.open_dataset(os.path.join(fpath_in, topofname_in), decode_times=False) # model topo
 topg = ds2.topg.data
 topg0 = topg[0, :, :] # take the initial topography
 indx = np.where(np.isnan(topg0)) # find indices with NaN values
