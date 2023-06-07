@@ -95,8 +95,10 @@ lithk_ctrl_anom=$exp_out_path/preprocessed/lithk_${name_base_string}_ctrl_anomal
 ncdiff -O $ctrl_lithk_20152100 ${lithk_ctrl_init}_notime $lithk_ctrl_anom
 
 echo "remove ctrl anomaly from projection"
+# some models used nonstandard filenames, so use wildcard to find the correct file
+lithkfile=`ls -1 $exp_in_path/*lithk_*.nc`
 lithk_anom_adj=$exp_out_path/preprocessed/lithk_${name_base_string}_anomaly_adjusted.nc
-ncdiff -O $exp_in_path/lithk_${name_base_string}.nc $lithk_ctrl_anom $lithk_anom_adj
+ncdiff -O $lithkfile $lithk_ctrl_anom $lithk_anom_adj
 
 echo "ensure no negative thickness!"
 lithk_anom_adj_cln=$exp_out_path/preprocessed/lithk_${name_base_string}_anomaly_adjusted_cleaned.nc
@@ -114,8 +116,10 @@ grdthk_subsamp=$exp_out_path/preprocessed/grdice_${name_base_string}_preprocesse
 ncap2 -O -s "where(lithk*910/1028+topg<0) lithk=0.0" $lithk_subsamp $grdthk_subsamp
 
 echo "subsample topg - only need initial topg"
+# some models used nonstandard filenames, so use wildcard to find the correct file
+topgfile=`ls -1 $exp_in_path/*topg_*.nc`
 topg_subsamp=$exp_out_path/preprocessed/topg_${name_base_string}_preprocessed.nc
-ncks -O -d time,0 $exp_in_path/topg_${name_base_string}.nc $topg_subsamp
+ncks -O -d time,0 $topgfile $topg_subsamp
 
 echo "calc SLC for ctrl, projection, and anomaly-adjusted-cleaned proj"
 python $SCRIPT_DIR/calc_SLR.py --lithk $ctrl_lithk_20152100 --topg $exp_in_path/topg_${name_base_string}.nc --out $exp_out_path/preprocessed/slc-ctrl.nc
