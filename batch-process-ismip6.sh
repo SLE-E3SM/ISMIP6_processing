@@ -8,7 +8,7 @@
 # a python env is needed.  may need/want to change this.
 #source /usr/projects/climate/mhoffman/compass/main/load_dev_compass_1.2.0-alpha.5_chicoma-cpu_gnu_mpich_albany.sh
 
-nprocs=128
+nprocs=32
 
 IS=AIS
 ISMIP6_ARCHIVE=/lustre/scratch5/mhoffman/ISMIP6_2100_archive
