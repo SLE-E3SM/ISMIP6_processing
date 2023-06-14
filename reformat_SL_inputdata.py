@@ -37,7 +37,7 @@ times = dtime * np.arange(0, len(t))
 np.savetxt(os.path.join(fpath_out+"times"), times)
 
 for time_idx in np.arange(0, len(t)):
-    dataOut = xr.Dataset({icefname_out: (['x', 'y'], lithk.data[time_idx,:,:])})
+    dataOut = xr.Dataset({icefname_out: (['lat', 'lon'], lithk.data[time_idx,:,:])})
     dataOut.to_netcdf(os.path.join(fpath_out, f'{icefname_out}{time_idx}.nc'))
 
 
@@ -50,7 +50,7 @@ topg = ds2.topg.data
 topg0 = topg[0, :, :] # take the initial topography
 indx = np.where(np.isnan(topg0)) # find indices with NaN values
 topg0[indx] = etopo2_data[indx] # replace the model topo with etopo2
-dataOut = xr.Dataset({topofname_out: (['x', 'y'], topg0)})
+dataOut = xr.Dataset({topofname_out: (['lat', 'lon'], topg0)})
 dataOut.to_netcdf(os.path.join(fpath_out, f'{topofname_out}.nc'))
 
 
