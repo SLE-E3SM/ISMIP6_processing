@@ -24,8 +24,8 @@
     timearray     = 'times'
     topomodel     = ''
     topo_initial  = 'topo_initial'
-    grid_lat      = 'GLlat_512.txt'
-    grid_lon      = 'GLlon_512.txt'
+    grid_lat      = 'GLlat_2048.txt'
+    grid_lon      = 'GLlon_2048.txt'
 /
 &model_config
     checkmarine = .true.

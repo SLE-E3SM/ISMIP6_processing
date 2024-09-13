@@ -19,9 +19,10 @@ EXP=exp12
 set -e # exit on error
 
 # ---- STUFF TO SET ONCE -----------
-OUTPUT_DIR=/lustre/scratch5/mhoffman/SLM_Processing_MJH2
+OUTPUT_DIR=/lustre/scratch5/mhoffman/SLM_Processing_2024-09-11/viscoelastic-wais-rheology
 ISMIP6_ARCHIVE=/lustre/scratch5/mhoffman/ISMIP6_2100_archive
-AISMAPFILE=/usr/projects/climate/mhoffman/SLE-E3SM/ISMIP6_processing/mapfile_polarRank2_to_gaussRank2.nc
+#AISMAPFILE=/usr/projects/climate/mhoffman/SLE-E3SM/ISMIP6_processing/mapfile_polarRank2_to_gaussRank2.nc
+AISMAPFILE=/usr/projects/climate/mhoffman/SLE-E3SM/ISMIP6_processing/mapfile_ismip6_to_slm2048_conserve.nc
 GISMAPFILE=/usr/projects/climate/mhoffman/SLE-E3SM/ISMIP6_processing/mapfile_ismip6_GrIS_Gauss.nc
 YEAR_STRIDE=5 # stride in years to subsample
 # ----------------------------------
