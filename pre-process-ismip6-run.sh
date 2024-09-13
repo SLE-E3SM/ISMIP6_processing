@@ -120,7 +120,8 @@ ncks -O -d time,0,,$YEAR_STRIDE $lithk_anom_adj_cln $lithk_subsamp
 
 echo "only keep grounded ice"
 grdthk_subsamp=$exp_out_path/preprocessed/grdice_${name_base_string}_preprocessed.nc
-ncap2 -O -s "where(lithk*910/1028+topg<0) lithk=0.0" $lithk_subsamp $grdthk_subsamp
+#ncap2 -O -s "where(lithk*910/1028+topg<0) lithk=0.0" $lithk_subsamp $grdthk_subsamp
+cp $lithk_subsamp $grdthk_subsamp
 
 echo "subsample topg - only need initial topg"
 topg_subsamp=$exp_out_path/preprocessed/topg_${name_base_string}_preprocessed.nc

@@ -28,7 +28,7 @@
     grid_lon      = 'GLlon_512.txt'
 /
 &model_config
-    checkmarine = .false.
+    checkmarine = .true.
     tpw = .true.
     calcRG = .true.
     input_times = .false.
