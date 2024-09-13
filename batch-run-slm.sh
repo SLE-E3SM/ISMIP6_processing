@@ -1,32 +1,42 @@
 #!/bin/bash
-#SBATCH --time=2:00:00
+#SBATCH --time=12:00:00
 #SBATCH --nodes=1
+##SBATCH --ntasks=32
+##SBATCH --mem-per-cpu=4G
 #SBATCH --cpus-per-task=1
-#SBATCH --qos=debug
-#SBATCH --reservation=debug
-#SBATCH --mem-per-cpu=4G
+##SBATCH --qos=debug
+##SBATCH --reservation=debug
 
 
-date
-nprocs=128
+# Values to adjust ==============
+nprocs=32
+# adjust ntasks in header to match this value (not sure if required)
+# can be 128 for nglv=512.  Needs to be smaller for nglv=2048 to avoid memory error.  32 works, but larger may be ok too - needs trial and error
+
+startnum=0
+# adjust this to restart an job that timed out.  Set this to the first value larger than the largest number of the last *set* of nprocs runs that completed
 
 IS=AIS
-ENSEMBLE_ROOT=/lustre/scratch5/mhoffman/SLM_Processing_MJH2
+ENSEMBLE_ROOT=/lustre/scratch5/mhoffman/SLM_Processing_2024-09-11/elastic-only
+#ENSEMBLE_ROOT=/lustre/scratch5/mhoffman/SLM_Processing_2024-09-11/viscoelastic-wais-rheology
+# ================================
 
-
+date
 i=0
 ii=0
 ((maxproc=nprocs-1))
 echo $maxproc
 for d1 in ${ENSEMBLE_ROOT}/${IS}/*/ ; do
-    echo $d1
+    #echo $d1
     ISM=`basename $d1`
     for d2 in ${ENSEMBLE_ROOT}/${IS}/${ISM}/*/; do
-       echo $d2
+       #echo $d2
        EXP=`basename $d2`
        cd $d2/SLM_run
-       echo Starting: $i $ii $IS $ISM $EXP at `pwd`
-       srun --exclusive -n 1 ./runslm &> slm.log && echo "SUCCESS: $i $ii $IS $ISM $EXP" || echo "FAILED: $i $ii $IS $ISM $EXP" &
+       if [[ "$ii" >= $startnum ]]; then
+          echo Starting: $i $ii $IS $ISM $EXP at `pwd`
+          srun --exclusive -n 1 ./runslm &> slm.log && echo "SUCCESS: $i $ii $IS $ISM $EXP" || echo "FAILED: $i $ii $IS $ISM $EXP" &
+       fi
        cd -
        ((ii+=1))
        if [[ "$i" == $maxproc ]]; then

@@ -2,12 +2,12 @@
 #SBATCH --time=0:60:00
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=1
-#SBATCH --qos=debug
-#SBATCH --reservation=debug
-#SBATCH --mem-per-cpu=4G
+###SBATCH --qos=debug
+###SBATCH --reservation=debug
+###SBATCH --mem-per-cpu=2G
 
 # a python env is needed.  may need/want to change this.
-#source /usr/projects/climate/mhoffman/compass/main/load_dev_compass_1.2.0-alpha.5_chicoma-cpu_gnu_mpich_albany.sh
+source /usr/projects/climate/mhoffman/compass/MALI_PR64_TFextrap/load_dev_compass_1.4.0-alpha.7_chicoma-cpu_gnu_mpich_albany.sh
 
 nprocs=128
 
