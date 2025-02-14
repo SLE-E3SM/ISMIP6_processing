@@ -23,6 +23,21 @@ topofname_out = 'topo_initial'
 ############################################################################
 
 
+
+# Part 2. reformatting the initial bedrock topography
+# read in topography files
+etopo2_data = np.loadtxt('etopo2_512_orig') # present-day etopo2 dataset
+#etopo2_data = np.loadtxt('etopo2_nglv2048_outside_AIS') # present-day etopo2 dataset
+etopo2_data = np.flipud(etopo2_data)
+ds2 = xr.open_dataset(os.path.join(fpath_in, topofname_in), decode_times=False) # model topo
+topg = ds2.topg.data
+topg0 = topg[0, :, :] # take the initial topography
+indx = np.where(np.isnan(topg0)) # find indices with NaN values
+topg0[indx] = etopo2_data[indx] # replace the model topo with etopo2
+dataOut = xr.Dataset({topofname_out: (['lat', 'lon'], topg0)})
+dataOut.to_netcdf(os.path.join(fpath_out, f'{topofname_out}.nc'))
+
+
 # Part 1. reformatting the ice thickness file
 # read in the original ice thickness data
 print ('opening file:'+os.path.join(fpath_in, icefname_in) )
@@ -37,22 +52,12 @@ times = dtime * np.arange(0, len(t))
 np.savetxt(os.path.join(fpath_out+"times"), times)
 
 for time_idx in np.arange(0, len(t)):
+    #  !!!!!  to convert to grdthk on GL grid - next 2 lines !!!!!
+    #lithknow = lithk.data[time_idx,:,:]
+    #lithk.data[time_idx,:,:] = np.where(lithknow*910/1028+topg0<0.0, 0.0, lithknow)
+    # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     dataOut = xr.Dataset({icefname_out: (['lat', 'lon'], lithk.data[time_idx,:,:])})
     dataOut.to_netcdf(os.path.join(fpath_out, f'{icefname_out}{time_idx}.nc'))
-
-
-# Part 2. reformatting the initial bedrock topography
-# read in topography files
-#etopo2_data = np.loadtxt('etopo2_512_orig') # present-day etopo2 dataset
-etopo2_data = np.loadtxt('etopo2_nglv2048_outside_AIS') # present-day etopo2 dataset
-etopo2_data = np.flipud(etopo2_data)
-ds2 = xr.open_dataset(os.path.join(fpath_in, topofname_in), decode_times=False) # model topo
-topg = ds2.topg.data
-topg0 = topg[0, :, :] # take the initial topography
-indx = np.where(np.isnan(topg0)) # find indices with NaN values
-topg0[indx] = etopo2_data[indx] # replace the model topo with etopo2
-dataOut = xr.Dataset({topofname_out: (['lat', 'lon'], topg0)})
-dataOut.to_netcdf(os.path.join(fpath_out, f'{topofname_out}.nc'))
 
 
 # Plot and check topography file

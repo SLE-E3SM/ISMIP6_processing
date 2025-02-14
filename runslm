@@ -14,7 +14,7 @@
 #==================
  set iter = $iter
 echo "Starting Sea Level Model."
-/usr/projects/climate/mhoffman/SLE-E3SM/1DSeaLevelModel_FWTW/slmodel.exe $itersl $iter $dtime $starttime namelist
+/global/cfs/cdirs/fanssie/users/hoffman2/RSL/Myungsoo-paper-analysis/1DSeaLevelModel_FWTW/slmodel.exe $itersl $iter $dtime $starttime namelist
 echo "Sea Level Model time step complete."
 @ iter = $iter + 1
 #==

@@ -6,8 +6,8 @@
 &io_directory
     inputfolder_ice = '../reformatted/'
     inputfolder = '../reformatted/'
-    planetfolder = '/usr/projects/climate/mhoffman/SLE-E3SM/SeaLevelModel_Standard_Inputs/earthmodel/'
-    gridfolder = '/usr/projects/climate/mhoffman/SLE-E3SM/SeaLevelModel_Standard_Inputs/others/'
+    planetfolder = '/global/cfs/cdirs/fanssie/users/hoffman2/RSL/Myungsoo-paper-analysis/SeaLevelModel_Standard_Inputs/earthmodel/'
+    gridfolder = '/global/cfs/cdirs/fanssie/users/hoffman2/RSL/Myungsoo-paper-analysis/SeaLevelModel_Standard_Inputs/others/'
     outputfolder = 'OUTPUT_SLM/'
     outputfolder_ice = 'ICELOAD_SLM/'
     folder_coupled = ''
@@ -24,8 +24,8 @@
     timearray     = 'times'
     topomodel     = ''
     topo_initial  = 'topo_initial'
-    grid_lat      = 'GLlat_2048.txt'
-    grid_lon      = 'GLlon_2048.txt'
+    grid_lat      = 'GLlat_512.txt'
+    grid_lon      = 'GLlon_512.txt'
 /
 &model_config
     checkmarine = .true.
@@ -36,6 +36,7 @@
     iceVolume = .true.
     coupling = .false.
     patch_ice = .false.
+    elastic_only = .true.
 /
 &timewindow_config
     L_sim = 85

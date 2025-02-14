@@ -19,10 +19,12 @@ EXP=exp12
 set -e # exit on error
 
 # ---- STUFF TO SET ONCE -----------
-OUTPUT_DIR=/lustre/scratch5/mhoffman/SLM_Processing_2024-09-11/viscoelastic-wais-rheology
-ISMIP6_ARCHIVE=/lustre/scratch5/mhoffman/ISMIP6_2100_archive
-#AISMAPFILE=/usr/projects/climate/mhoffman/SLE-E3SM/ISMIP6_processing/mapfile_polarRank2_to_gaussRank2.nc
-AISMAPFILE=/usr/projects/climate/mhoffman/SLE-E3SM/ISMIP6_processing/mapfile_ismip6_to_slm2048_conserve.nc
+#OUTPUT_DIR=/global/cfs/cdirs/fanssie/users/hoffman2/RSL/Myungsoo-paper-analysis/SLM_Processing_2024-10-26/512-grdiceCalcOnGL-noMC-elastic-only
+#OUTPUT_DIR=/global/cfs/cdirs/fanssie/users/hoffman2/RSL/Myungsoo-paper-analysis/SLM_Processing_2024-10-26/512-MC-elastic-only
+OUTPUT_DIR=/global/cfs/cdirs/fanssie/users/hoffman2/RSL/Myungsoo-paper-analysis/SLM_Processing_2024-10-27/512-hafPSG
+ISMIP6_ARCHIVE=/global/cfs/cdirs/fanssie/standard_datasets/ISMIP6_2100_archive
+#AISMAPFILE=/global/cfs/cdirs/fanssie/users/hoffman2/RSL/Myungsoo-paper-analysis/ISMIP6_processing/mapfile_ismip6_to_slm2048_conserve.nc
+AISMAPFILE=/global/cfs/cdirs/fanssie/users/hoffman2/RSL/Myungsoo-paper-analysis/ISMIP6_processing/mapfile_polarRank2_to_gaussRank2.nc
 GISMAPFILE=/usr/projects/climate/mhoffman/SLE-E3SM/ISMIP6_processing/mapfile_ismip6_GrIS_Gauss.nc
 YEAR_STRIDE=5 # stride in years to subsample
 # ----------------------------------
@@ -121,8 +123,15 @@ ncks -O -d time,0,,$YEAR_STRIDE $lithk_anom_adj_cln $lithk_subsamp
 
 echo "only keep grounded ice"
 grdthk_subsamp=$exp_out_path/preprocessed/grdice_${name_base_string}_preprocessed.nc
+# grd ice
 #ncap2 -O -s "where(lithk*910/1028+topg<0) lithk=0.0" $lithk_subsamp $grdthk_subsamp
-cp $lithk_subsamp $grdthk_subsamp
+
+# all ice
+#cp $lithk_subsamp $grdthk_subsamp
+
+#vaf
+ncap2 -O -s "*hf = topg/910.0*1028.0; where(hf>0.0) hf=0.0; lithk += hf; where(lithk < 0.0) lithk = 0.0"  $lithk_subsamp $grdthk_subsamp 
+
 
 echo "subsample topg - only need initial topg"
 topg_subsamp=$exp_out_path/preprocessed/topg_${name_base_string}_preprocessed.nc

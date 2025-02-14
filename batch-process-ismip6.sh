@@ -1,18 +1,17 @@
 #!/bin/bash
-#SBATCH --time=0:60:00
+#SBATCH --time=0:30:00
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=1
-###SBATCH --qos=debug
-###SBATCH --reservation=debug
-###SBATCH --mem-per-cpu=2G
+#SBATCH --qos=debug
+#SBATCH  --constraint=cpu
 
 # a python env is needed.  may need/want to change this.
-source /usr/projects/climate/mhoffman/compass/MALI_PR64_TFextrap/load_dev_compass_1.4.0-alpha.7_chicoma-cpu_gnu_mpich_albany.sh
+source /global/cfs/cdirs/fanssie/users/hoffman2/compass/main/load_dev_compass_1.4.0-alpha.7_pm-cpu_gnu_mpich_albany.sh
 
 nprocs=128
 
 IS=AIS
-ISMIP6_ARCHIVE=/lustre/scratch5/mhoffman/ISMIP6_2100_archive
+ISMIP6_ARCHIVE=/global/cfs/cdirs/fanssie/standard_datasets/ISMIP6_2100_archive
 
 
 AIS_STD_EXP_LIST="exp05 exp06 exp07 exp08 exp09 exp10 exp12 exp13"
